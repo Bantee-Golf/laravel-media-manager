@@ -19,11 +19,14 @@ Add the repository to the required list on composer.json
 In `config\app.php`, add the service provider and the Facade. 
 
 Add to the list of providers: 
+
 `EMedia\MediaManager\MediaManagerServiceProvider::class`
 
 Add to the list of aliases: 
-`'FileHandler'  => EMedia\MediaManager\Facades\FileHandler::class,`
-`'ImageHandler' => EMedia\MediaManager\Facades\ImageHandler::class,`
+```
+'FileHandler'  => EMedia\MediaManager\Facades\FileHandler::class,
+'ImageHandler' => EMedia\MediaManager\Facades\ImageHandler::class,
+```
 
 ## To handle file uploads, images and other media
 
