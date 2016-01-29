@@ -4,8 +4,8 @@
 namespace EMedia\MediaManager\Files;
 
 
+use EMedia\MediaManager\Exceptions\FormFieldNotFoundException;
 use EMedia\MediaManager\Exceptions\UniqueFilenameGenerationException;
-use EMedia\MediaManager\Facades\ImageHandler;
 use Illuminate\Support\Facades\Input;
 
 class FileHandler
@@ -34,8 +34,7 @@ class FileHandler
 		{
 			$file = Input::file($fieldName);
 
-			// dd($file->getClientOriginalName());
-			$newFileName = ImageHandler::getUniqueFileName($absoluteFileDirPath, $file->getClientOriginalName());
+			$newFileName = $this->getUniqueFileName($absoluteFileDirPath, $file->getClientOriginalName());
 			$file->move($absoluteFileDirPath, $newFileName);
 
 			if (!empty($relativeFileDir))
@@ -46,6 +45,10 @@ class FileHandler
 			{
 				return $absoluteFileDirPath . $newFileName;
 			}
+		}
+		else
+		{
+			throw new FormFieldNotFoundException("Field $fieldName is not found with the input.");
 		}
 		return false;
 	}
