@@ -13,7 +13,7 @@ Add the private repository in your 'composer.json` file.
 ```
 
 Add the repository to the required list on composer.json
-`composer require emedia/media-handler`
+`composer require emedia/media-manager`
 
 
 In `config\app.php`, add the service provider and the Facade. 
