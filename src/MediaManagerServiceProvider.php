@@ -22,5 +22,7 @@ class MediaManagerServiceProvider extends ServiceProvider {
 		$this->app->bind('emedia.mediaManager.imageHandler', function () {
 			return $this->app->make('EMedia\MediaManager\Files\ImageHandler');
 		});
+
+		$this->app->register(\Intervention\Image\ImageServiceProvider::class);
 	}
 }
