@@ -3,7 +3,7 @@
     "description": "Media management package for Laravel 5",
     "type": "package",
     "require": {
-        "php": "^5.5",
+        "php": ">=5.5",
         "illuminate/support": "^5.1",
         "intervention/image": "^2.3",
         "intervention/imagecache": "^2.3"
