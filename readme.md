@@ -1,4 +1,4 @@
-# File and Media Handling Package for Laravel 5
+# File and Media Handling Package for Laravel 6
 
 ## Installation
 
@@ -16,13 +16,13 @@ Add the repository to the required list on composer.json
 `composer require emedia/media-manager`
 
 
-In `config\app.php`, add the service provider and the Facade. 
+In `config\app.php`, add the service provider and the Facade.
 
-Add to the list of providers: 
+Add to the list of providers:
 
 `EMedia\MediaManager\MediaManagerServiceProvider::class`
 
-Add to the list of aliases: 
+Add to the list of aliases:
 ```
 'FileHandler'  => EMedia\MediaManager\Facades\FileHandler::class,
 'ImageHandler' => EMedia\MediaManager\Facades\ImageHandler::class,
@@ -30,7 +30,7 @@ Add to the list of aliases:
 
 ## To handle file uploads, images and other media
 
-To upload a file, 
+To upload a file,
 ```
 $fileDir  	 = '/images/content/';			// relative dir for HTTP use
 $fileDirPath = public_path() . '/images/content/'; // absolute path on server
