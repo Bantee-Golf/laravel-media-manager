@@ -50,7 +50,7 @@ class ImageHandler
 	{
 		$mimeType = MimeTypeGuesser::getInstance()->guess($fullPath);
 
-		if (str_contains($mimeType, ['image'])) return 'image';
+		if (\Illuminate\Support\Str::contains($mimeType, ['image'])) return 'image';
 
 		return false;
 	}

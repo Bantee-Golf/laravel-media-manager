@@ -67,7 +67,7 @@ class FileHandler
 
 		for ($i=0; $i < 500; $i++)
 		{
-			$newFileName = date('Ymd') . str_random(15) . '.' . $pathInfo['extension'];
+			$newFileName = date('Ymd') . \Illuminate\Support\Str::random(15) . '.' . $pathInfo['extension'];
 			if ( ! file_exists($dirPath . $newFileName))
 			{
 				break;
