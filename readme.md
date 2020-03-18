@@ -1,4 +1,4 @@
-# File and Media Handling Package for Laravel 6
+# File and Media Handling Package for Laravel 6 and 7
 
 ## Installation
 
