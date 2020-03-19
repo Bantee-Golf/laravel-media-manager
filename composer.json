@@ -1,10 +1,10 @@
 {
     "name": "emedia/media-manager",
-    "description": "Media management package for Laravel 5",
+    "description": "Media management package for Laravel 6 and 7",
     "type": "package",
     "require": {
         "php": "^7.2",
-        "illuminate/support": "^6.0",
+        "illuminate/support": "^6.0|^7.0",
         "intervention/image": "~2.3"
     },
     "autoload": {
