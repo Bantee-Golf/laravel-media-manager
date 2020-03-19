@@ -15,6 +15,14 @@ Add the private repository in your 'composer.json` file.
 Add the repository to the required list on composer.json
 `composer require emedia/media-manager`
 
+Version Compatibility
+
+| Laravel Version | Media Manager Version    |
+| --------------- |:------------------------:|
+| 6, 7            | 2.1.x                    |
+| 6               | 2.0.x                    |
+| 5.7             | 1.0.x                    |
+
 
 In `config\app.php`, add the service provider and the Facade.
 
