@@ -4,7 +4,7 @@
 namespace EMedia\MediaManager\Files;
 
 use Intervention\Image\Facades\Image;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
+use Symfony\Component\Mime\MimeTypes;
 
 class ImageHandler
 {
@@ -48,7 +48,8 @@ class ImageHandler
 	 */
 	public function getMediaType($fullPath)
 	{
-		$mimeType = MimeTypeGuesser::getInstance()->guess($fullPath);
+		$mimeTypes = new MimeTypes();
+		$mimeType = $mimeTypes->guessMimeType($fullPath);
 
 		if (\Illuminate\Support\Str::contains($mimeType, ['image'])) return 'image';
 
