@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EMedia\MediaManager\Files;
+namespace EMedia\MediaManager\Domain;
 
 
 use EMedia\MediaManager\Exceptions\FormFieldNotFoundException;

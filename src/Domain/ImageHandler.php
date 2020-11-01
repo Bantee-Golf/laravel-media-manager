@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EMedia\MediaManager\Files;
+namespace EMedia\MediaManager\Domain;
 
 use Intervention\Image\Facades\Image;
 use Symfony\Component\Mime\MimeTypes;
