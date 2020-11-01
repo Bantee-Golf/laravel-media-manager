@@ -15,14 +15,13 @@ class MediaManagerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->bind('emedia.mediaManager.fileHandler', function () {
-			return $this->app->make('EMedia\MediaManager\Files\FileHandler');
-		});
-
-		$this->app->bind('emedia.mediaManager.imageHandler', function () {
-			return $this->app->make('EMedia\MediaManager\Files\ImageHandler');
-		});
-
 		$this->app->register(\Intervention\Image\ImageServiceProvider::class);
+	}
+
+	public function boot()
+	{
+		$this->publishes([
+			__DIR__ . '/../publish' => base_path(),
+		], 'oxygen::auto-publish');
 	}
 }
