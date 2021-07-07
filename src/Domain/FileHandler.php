@@ -30,7 +30,8 @@ class FileHandler
 		if ($relativeFileDir) $relativeFileDir = rtrim($relativeFileDir, '/') . '/';
 
 		// handle images
-		if (Input::hasFile($fieldName))
+		$request = request();
+		if (request()->hasFile($fieldName))
 		{
 			$file = Input::file($fieldName);
 

@@ -46,7 +46,7 @@ class ImageHandler
 	 * @param $fullPath
 	 * @return bool|string
 	 */
-	public function getMediaType($fullPath)
+	public static function getMediaType($fullPath)
 	{
 		$mimeTypes = new MimeTypes();
 		$mimeType = $mimeTypes->guessMimeType($fullPath);

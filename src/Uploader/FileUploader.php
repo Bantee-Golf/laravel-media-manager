@@ -5,8 +5,8 @@ namespace EMedia\MediaManager\Uploader;
 
 
 use ElegantMedia\PHPToolkit\Path;
+use EMedia\MediaManager\Domain\ImageHandler;
 use EMedia\MediaManager\Exceptions\FormFieldNotFoundException;
-use EMedia\MediaManager\Facades\ImageHandler;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileUploader
 {
@@ -33,7 +35,7 @@ class FileUploader
 	protected $subDirectories;
 	protected $thumbSize;
 
-	/* @var \Illuminate\Http\UploadedFile $uploadedFile */
+	/* @var UploadedFile $uploadedFile */
 	protected $uploadedFile = null;
 	protected $localFilePath = null;
 	protected $keepOriginalFileName = false;
@@ -342,7 +344,7 @@ class FileUploader
 						gettype($request->input($fieldName)) === 'object' &&
 						get_class($request->input($fieldName)) === 'Illuminate\Http\UploadedFile'
 					)) {
-						throw new InvalidFileException("Field $fieldName is not a file.");
+						throw new FileException("Field $fieldName is not a file.");
 					}
 				}
 			}
