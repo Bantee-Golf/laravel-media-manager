@@ -6,7 +6,11 @@ Use versions as below.
 
 | Laravel Version | This Package Version     | Branch         |
 | --------------- |:------------------------:|:--------------:|
-| v8              | 3.x                      | master         |  
+| v9              | 3.1                      | master         |  
+| v8              | 3.0                      | version/v3.0   |   
+
+## v3.1.0
+- Illuminate 9 Support
 
 ## v3.0.0
 - Illuminate 8 Support
