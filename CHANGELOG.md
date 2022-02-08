@@ -6,11 +6,13 @@ Use versions as below.
 
 | Laravel Version | This Package Version     | Branch         |
 | --------------- |:------------------------:|:--------------:|
-| v9              | 3.1                      | master         |  
-| v8              | 3.0                      | version/v3.0   |   
+| v9              | 4.x                      | master         |  
+| v8              | 3.x                      | 3.0            |  
 
-## v3.1.0
+## v4.0
 - Illuminate 9 Support
+- Drop Php 7 Support
+- Use updated FlySystem
 
 ## v3.0.0
 - Illuminate 8 Support

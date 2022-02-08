@@ -3,7 +3,6 @@
 
 namespace EMedia\MediaManager\Uploader;
 
-
 use ElegantMedia\PHPToolkit\Path;
 use EMedia\MediaManager\Domain\ImageHandler;
 use EMedia\MediaManager\Exceptions\FormFieldNotFoundException;
@@ -16,33 +15,38 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use InvalidArgumentException;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Mime\MimeTypes;
 
 class FileUploader
 {
 
-	protected $saveToDirectory;
-	protected $fileFieldName = 'file';
-	protected $diskName = 'default';
-	protected $subDirectoryDateFormat;
-	protected $filePrefixDateFormat;
-	protected $resizeImageToMaxWidth = null;
-	protected $resizeImageToMaxHeight = null;
-	protected $withThumbnail = false;
-	protected $convertImageToFormat = null;
+	protected string $saveToDirectory;
+	protected string $fileFieldName = 'file';
+	protected string $diskName = 'default';
+	protected string $subDirectoryDateFormat;
+	protected string|null $filePrefixDateFormat = null;
+	protected int|null $resizeImageToMaxWidth = null;
+	protected int|null $resizeImageToMaxHeight = null;
+	protected int|null $withThumbnail = null;
+	protected string|null $convertImageToFormat = null;
 	protected $convertImageToQuality = null;
 	protected $request;
 	protected $subDirectories;
-	protected $thumbSize;
+	protected integer $thumbSize;
 
 	/* @var UploadedFile $uploadedFile */
-	protected $uploadedFile = null;
+	protected UploadedFile|null $uploadedFile = null;
 	protected $localFilePath = null;
 	protected $keepOriginalFileName = false;
 
 	public function __construct(Request $request = null)
 	{
-		if ($request) $this->request = $request;
+		if ($request) {
+			$this->request = $request;
+		}
 	}
 
 	public function withRequest(Request $request)
@@ -95,7 +99,9 @@ class FileUploader
 
 	public function prefixFileNameDateFormatAs($dateFormat = null)
 	{
-		if ($dateFormat) $this->filePrefixDateFormat = $dateFormat;
+		if ($dateFormat) {
+			$this->filePrefixDateFormat = $dateFormat;
+		}
 		return $this;
 	}
 
@@ -164,7 +170,8 @@ class FileUploader
 			$file = $this->getFile();
 			return $file->getMimeType();
 		} elseif ($this->localFilePath) {
-			return MimeTypeGuesser::getInstance()->guess($this->localFilePath);
+			$mimeTypes = new MimeTypes();
+			return $mimeTypes->guessMimeType($this->localFilePath);
 		}
 
 		throw new InvalidArgumentException("File or Request is not set");
@@ -193,7 +200,7 @@ class FileUploader
 	{
 		$mediaType = ImageHandler::getMediaType($this->getLocalFilePath());
 
-		return ($mediaType === 'image')? true: false;
+		return $mediaType === 'image';
 	}
 
 	/**
@@ -258,16 +265,23 @@ class FileUploader
 		throw new FileNotFoundException("Unable to generate image or write to file {$saveToPath}");
 	}
 
-	protected function resizeImageToMaxSize($imagePath,
-											$maxWidth = null,
-											$maxHeight = null,
-											$overwrite = true,
-											$saveToPath = false)
-	{
+	protected function resizeImageToMaxSize(
+		$imagePath,
+		$maxWidth = null,
+		$maxHeight = null,
+		$overwrite = true,
+		$saveToPath = false
+	) {
 		$image = Image::make($imagePath);
-		if ($overwrite) $saveToPath = $imagePath;
-		if (!$maxWidth) $maxWidth = $this->resizeImageToMaxWidth;
-		if (!$maxHeight) $maxHeight = $this->resizeImageToMaxWidth;
+		if ($overwrite) {
+			$saveToPath = $imagePath;
+		}
+		if (!$maxWidth) {
+			$maxWidth = $this->resizeImageToMaxWidth;
+		}
+		if (!$maxHeight) {
+			$maxHeight = $this->resizeImageToMaxWidth;
+		}
 
 		$newWidth = $newHeight = null;
 
@@ -290,20 +304,24 @@ class FileUploader
 		$currentHeight = $image->height();
 
 		if ($maxWidth !== null && $currentWidth > $maxWidth) {
-			if (!$maxWidth > 0) throw new InvalidArgumentException("Image max width must be higher than 0");
+			if (!$maxWidth > 0) {
+				throw new InvalidArgumentException("Image max width must be higher than 0");
+			}
 
 			$newWidth = $maxWidth;
 		}
 
 		if ($maxHeight !== null && $currentHeight > $maxHeight) {
-			if (!$maxHeight > 0) throw new InvalidArgumentException("Image max height must be higher than 0");
+			if (!$maxHeight > 0) {
+				throw new InvalidArgumentException("Image max height must be higher than 0");
+			}
 
 			$newHeight = $maxHeight;
 		}
 
 		// only resize if at least one of the new values are present
 		if ($newWidth > 0 || $newHeight > 0) {
-			$image->resize($maxWidth, $maxHeight, function($constraint) {
+			$image->resize($maxWidth, $maxHeight, function ($constraint) {
 				$constraint->aspectRatio();
 			});
 		}
@@ -332,12 +350,12 @@ class FileUploader
 			$fieldName = $this->fileFieldName;
 			$method = $request->method();
 
-			if ( $method === 'POST' || strtoupper($request->input('_method')) === 'PUT') {
-				if ( !$request->hasFile($fieldName) ) {
+			if ($method === 'POST' || strtoupper($request->input('_method')) === 'PUT') {
+				if (!$request->hasFile($fieldName)) {
 					throw new FormFieldNotFoundException("Field $fieldName is not found with the input.");
 				}
-			} else if ( $method === 'PUT') {
-				if ( empty($request->input($fieldName)) ){
+			} elseif ($method === 'PUT') {
+				if (empty($request->input($fieldName))) {
 					throw new FormFieldNotFoundException("Field $fieldName is not found with the input.");
 				} else {
 					if (!(
@@ -370,10 +388,12 @@ class FileUploader
 		// $resizedStreamPath = null;
 		$stream = null;
 		if ($this->resizeImageToMaxWidth || $this->resizeImageToMaxHeight) {
-			$workingFilePath = $this->resizeImageToMaxSize($localFilePath,
+			$workingFilePath = $this->resizeImageToMaxSize(
+				$localFilePath,
 				$this->resizeImageToMaxWidth,
 				$this->resizeImageToMaxHeight,
-				false);
+				false
+			);
 			// because we're not overriding the original local file
 			// we should delete this file later
 			$filesToDelete[] = $workingFilePath;
@@ -382,9 +402,11 @@ class FileUploader
 
 		// should we change the format?
 		if (!empty($this->convertImageToFormat)) {
-			$workingFilePath = $this->encodeImageFormat($workingFilePath,
+			$workingFilePath = $this->encodeImageFormat(
+				$workingFilePath,
 				$this->convertImageToFormat,
-				$this->convertImageToQuality);
+				$this->convertImageToQuality
+			);
 
 			// let's delete the original, because it will be renamed
 			$filesToDelete[] = $fileName;
@@ -401,13 +423,24 @@ class FileUploader
 			$fileName .= $fileNameSegments['filename'] . '.' . $workingFileSegments['extension'];
 
 			// if we changed the image format, we need to change the MIME type
-			$mimeType = MimeTypeGuesser::getInstance()->guess($workingFilePath);
+			$mimeTypes = new MimeTypes();
+			$mimeType = $mimeTypes->guessMimeType($workingFilePath);
 		}
 
 		$stream = fopen($workingFilePath, 'r+b');
 
 		$filePath = $dirPath . $fileName;
-		$result = $disk->getDriver()->put($filePath, $stream, ['mimetype' => $mimeType]);
+
+		$result = false;
+		try {
+			$disk->getDriver()->writeStream($filePath, $stream, ['mimetype' => $mimeType]);
+			if ($disk->exists($filePath)) {
+				$result = true;
+			}
+		} catch (FilesystemException | UnableToWriteFile $exception) {
+			// $result = false;
+			throw $exception;
+		}
 
 		if (is_resource($stream)) {
 			fclose($stream);
@@ -415,7 +448,9 @@ class FileUploader
 
 		// remove the temp files
 		foreach ($filesToDelete as $tempFilePath) {
-			if (file_exists($tempFilePath)) unlink($tempFilePath);
+			if (file_exists($tempFilePath)) {
+				unlink($tempFilePath);
+			}
 		}
 
 		// if we have a resized temp image, delete it
@@ -442,17 +477,27 @@ class FileUploader
 		$dirPath = $response->dirPath() . Path::withEndingSlash($subDirectoryPath);
 		$uploadFilePath = $dirPath . $response->fileName();
 
-		$imagePath = $this->resizeImageToMaxSize($this->getLocalFilePath(),
+		$imagePath = $this->resizeImageToMaxSize(
+			$this->getLocalFilePath(),
 			$this->thumbSize,
 			$this->thumbSize,
-			false);
+			false
+		);
 
 		$mimeType = $this->getMimeType();
 		$disk = Storage::disk($this->diskName);
 
 		$stream = fopen($imagePath, 'r+b');
 
-		$result = $disk->getDriver()->put($uploadFilePath, $stream, ['mimetype' => $mimeType]);
+		$result = false;
+		try {
+			$disk->getDriver()->writeStream($uploadFilePath, $stream, ['mimetype' => $mimeType]);
+			if ($disk->exists($uploadFilePath)) {
+				$result = true;
+			}
+		} catch (FilesystemException | UnableToWriteFile $exception) {
+			// $result = false;
+		}
 
 		if (is_resource($stream)) {
 			fclose($stream);
@@ -473,10 +518,11 @@ class FileUploader
 		return $thumbResponse;
 	}
 
-	public function getUniqueFileName($dirPath,
-									  $currentFilePath,
-									  FilesystemAdapter $disk = null)
-	{
+	public function getUniqueFileName(
+		$dirPath,
+		$currentFilePath,
+		FilesystemAdapter $disk = null
+	) {
 		$pathInfo = pathinfo($currentFilePath);
 		$newFileName = false;
 
@@ -523,5 +569,4 @@ class FileUploader
 
 		return $dirPath;
 	}
-
 }
