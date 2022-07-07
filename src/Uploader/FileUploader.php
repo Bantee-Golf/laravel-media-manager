@@ -23,7 +23,7 @@ use Symfony\Component\Mime\MimeTypes;
 class FileUploader
 {
 
-	protected string $saveToDirectory;
+	protected string|null $saveToDirectory = null;
 	protected string $fileFieldName = 'file';
 	protected string $diskName = 'default';
 	protected string $subDirectoryDateFormat;
@@ -35,7 +35,7 @@ class FileUploader
 	protected $convertImageToQuality = null;
 	protected $request;
 	protected $subDirectories;
-	protected integer $thumbSize;
+	protected int|null $thumbSize = null;
 
 	/* @var UploadedFile $uploadedFile */
 	protected UploadedFile|null $uploadedFile = null;
