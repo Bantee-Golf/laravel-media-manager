@@ -26,7 +26,7 @@ class FileUploader
 	protected string|null $saveToDirectory = null;
 	protected string $fileFieldName = 'file';
 	protected string $diskName = 'default';
-	protected string $subDirectoryDateFormat;
+	protected string|null $subDirectoryDateFormat = null;
 	protected string|null $filePrefixDateFormat = null;
 	protected int|null $resizeImageToMaxWidth = null;
 	protected int|null $resizeImageToMaxHeight = null;
