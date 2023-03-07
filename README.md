@@ -1,18 +1,13 @@
 # Laravel File and Media Handling Package
 
-This package adds the following.
-
--
--
--
-
 ### Version Compatibility
 
-| Laravel Version | This Package Version               | Branch         |
-| ---------------:| ----------------------------------:|---------------:|
-| v9              | 4.x                                | master         |  
-| v8              | 3.x                                | 3.0            |  
-| v6/v7           | See [CHANGELOG.md](CHANGELOG.md)   |                |
+| Laravel Version |             This Package Version | Branch |
+|----------------:|---------------------------------:|-------:|
+|             v10 |                              5.x |    5.x |  
+|              v9 |                              4.x |    4.x |  
+|              v8 |                              3.x |    3.0 |  
+|           v6/v7 | See [CHANGELOG.md](CHANGELOG.md) |        |
 
 ## Installation
 
@@ -47,4 +42,4 @@ php artisan vendor:publish --provider="Intervention\Image\ImageServiceProviderLa
 - Found a bug? Report as an issue and if you can, submit a pull request.
 - Please see [CONTRIBUTING](CONTRIBUTING.md) and for details.
 
-Copyright (c) 2020 Elegant Media.
+Copyright (c) Elegant Media.

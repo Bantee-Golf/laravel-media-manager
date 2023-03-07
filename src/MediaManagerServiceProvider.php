@@ -3,10 +3,10 @@
 
 namespace EMedia\MediaManager;
 
-
 use Illuminate\Support\ServiceProvider;
 
-class MediaManagerServiceProvider extends ServiceProvider {
+class MediaManagerServiceProvider extends ServiceProvider
+{
 
 	/**
 	 * Register the service provider.

@@ -1,13 +1,8 @@
 # Change Log
 
-## Version Compatibility
-
-Use versions as below.
-
-| Laravel Version | This Package Version     | Branch         |
-| --------------- |:------------------------:|:--------------:|
-| v9              | 4.x                      | master         |  
-| v8              | 3.x                      | 3.0            |  
+## v5.0.0
+- Illuminate 10 Support
+- Dropped PHP 8.0 Support
 
 ## v4.0
 - Illuminate 9 Support
