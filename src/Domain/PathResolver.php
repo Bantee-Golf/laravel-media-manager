@@ -17,18 +17,19 @@ class PathResolver
 	 * @return string
 	 * @throws FailedToResolvePathException
 	 */
-	public static function resolveDiskPath($diskName)
+	public static function resolveDiskPath($diskName): string
 	{
-		$disk = Storage::disk($diskName);
+		$driverName = config('filesystems.disks.' . $diskName . '.driver');
 
-		if (!$disk) {
-			throw new \InvalidArgumentException("The given disk name `{$diskName}` is invalid.");
+		if ($driverName !== 'local') {
+			throw new \InvalidArgumentException(
+				"The given disk name `{$diskName}` is invalid. A `local` disk is required."
+			);
 		}
 
-		$adapter = $disk->getDriver()->getAdapter();
-
-		if ($adapter instanceof \League\Flysystem\Adapter\Local) {
-			return $adapter->getPathPrefix();
+		$root = config("filesystems.disks.{$diskName}.root");
+		if (!empty($root)) {
+			return Path::withoutEndingSlash($root);
 		}
 
 		throw new FailedToResolvePathException("Only paths from a local disk can be resolved.");
@@ -44,9 +45,17 @@ class PathResolver
 	 * @return string
 	 * @throws FailedToResolvePathException
 	 */
-	public static function resolvePath($diskName, $filePath)
+	public static function resolvePath($diskName, $filePath): string
 	{
-		return self::resolveDiskPath($diskName) . Path::withoutEndingSlash($filePath);
+		$driverName = config('filesystems.disks.' . $diskName . '.driver');
+
+		if ($driverName !== 'local') {
+			throw new FailedToResolvePathException('Only `local` disk paths can be resolved.');
+		} else {
+			$diskPath = self::resolveDiskPath($diskName);
+
+			return $diskPath . Path::withStartingSlash($filePath);
+		}
 	}
 
 	/**
@@ -64,38 +73,6 @@ class PathResolver
 
 		if (!empty($path)) {
 			$disk = Storage::disk($diskName);
-			$adapter = $disk->getDriver()->getAdapter();
-
-			// build the URL based on a custom host
-			$servingHost = config('filesystems.disks.' . $diskName . '.host');
-			$servingProtocol = config('filesystems.disks.' . $diskName . '.protocol', 'http');
-
-			if ($servingHost != null) {
-				if ($servingHost === 'aws-static') {
-
-					if ($adapter instanceof \League\Flysystem\AwsS3v3\AwsS3Adapter) {
-						// https://s3-ap-southeast-2.amazonaws.com/dreamjobs-dev/images/content/20161210/2GhojsckzPsf6iN.png
-						$assetPath = $disk->url($path);
-
-						// http://[bucket].s3-website-[region].amazonaws.com/filepath
-						// http://dreamjobs-dev.s3-website-ap-southeast-2.amazonaws.com/images/content/20161210/2GhojsckzPsf6iN.png
-						$bucket = $adapter->getBucket();
-						$hostPath = preg_replace(['~https://s3-~', '~/' . $bucket . '/~'],
-							[$servingProtocol .'://'.$bucket.'.s3-website-', '/'], $assetPath);
-						if (!empty($hostPath)) {
-							return $hostPath;
-						}
-					}
-				} else {
-					$host = Path::withEndingSlash($servingHost);
-					return $servingProtocol . '://' . $host . $path;
-				}
-			}
-
-			// if this is for the 'public' disk, return the public URL
-			if ($diskName === 'public_access') {
-				return url($path);
-			}
 
 			return $disk->url($path);
 		}
@@ -120,7 +97,6 @@ class PathResolver
 		$adapter = $s3->getDriver()->getAdapter();
 
 		if ($adapter instanceof \League\Flysystem\AwsS3v3\AwsS3Adapter) {
-
 			$client  = $adapter->getClient();
 
 			$command = $client->getCommand('GetObject', [
@@ -160,5 +136,4 @@ class PathResolver
 
 		return implode('', $output);
 	}
-
 }

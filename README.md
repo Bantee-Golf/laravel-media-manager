@@ -10,7 +10,8 @@ This package adds the following.
 
 | Laravel Version | This Package Version               | Branch         |
 | ---------------:| ----------------------------------:|---------------:|
-| v8              | 3.x                                | master         |  
+| v9              | 4.x                                | master         |  
+| v8              | 3.x                                | 3.0            |  
 | v6/v7           | See [CHANGELOG.md](CHANGELOG.md)   |                |
 
 ## Installation
