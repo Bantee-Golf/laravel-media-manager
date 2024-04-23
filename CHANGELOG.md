@@ -1,13 +1,12 @@
 # Change Log
 
-## v5.0.0
-- Illuminate 10 Support
-- Dropped PHP 8.0 Support
+## Version Compatibility
 
-## v4.0
-- Illuminate 9 Support
-- Drop Php 7 Support
-- Use updated FlySystem
+Use versions as below.
+
+| Laravel Version | This Package Version     | Branch         |
+| --------------- |:------------------------:|:--------------:|
+| v8              | 3.x                      | master         |  
 
 ## v3.0.0
 - Illuminate 8 Support

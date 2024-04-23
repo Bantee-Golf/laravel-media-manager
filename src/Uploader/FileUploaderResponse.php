@@ -127,4 +127,5 @@ class FileUploaderResponse
 
 		return $this;
 	}
+
 }

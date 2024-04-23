@@ -3,9 +3,9 @@
 
 namespace EMedia\MediaManager\Exceptions;
 
+
 use Exception;
 
-class UniqueFilenameGenerationException extends Exception
-{
+class UniqueFilenameGenerationException extends Exception {
 
 }

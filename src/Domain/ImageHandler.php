@@ -21,17 +21,18 @@ class ImageHandler
 	public function resizeImageToMaxWidth($imagePath, $maxWidth = 1200, $newImagePath = false)
 	{
 		$image = Image::make($imagePath);
-		if (! $newImagePath) {
-			$newImagePath = $imagePath;
-		}
+		if ( ! $newImagePath) $newImagePath = $imagePath;
 
 		$currentWidth = $image->width();
-		if ($currentWidth > $maxWidth) {
-			$image->resize($maxWidth, null, function ($constraint) {
+		if ($currentWidth > $maxWidth)
+		{
+			$image->resize($maxWidth, null, function($constraint) {
 				$constraint->aspectRatio();
 			});
 			$image->save($newImagePath);
-		} else {
+		}
+		else
+		{
 			$image->save($newImagePath);
 		}
 
@@ -45,14 +46,12 @@ class ImageHandler
 	 * @param $fullPath
 	 * @return bool|string
 	 */
-	public static function getMediaType($fullPath)
+	public function getMediaType($fullPath)
 	{
 		$mimeTypes = new MimeTypes();
 		$mimeType = $mimeTypes->guessMimeType($fullPath);
 
-		if (\Illuminate\Support\Str::contains($mimeType, ['image'])) {
-			return 'image';
-		}
+		if (\Illuminate\Support\Str::contains($mimeType, ['image'])) return 'image';
 
 		return false;
 	}
@@ -72,7 +71,8 @@ class ImageHandler
 
 		$destinationAbsoluteDir = $absoluteDir . 'thumbs/';
 
-		if (!file_exists($destinationAbsoluteDir)) {
+		if (!file_exists($destinationAbsoluteDir))
+		{
 			mkdir($destinationAbsoluteDir, 755);
 		}
 
@@ -81,9 +81,11 @@ class ImageHandler
 		$this->resizeImageToMaxWidth($fullPath, $thumbnailWidth, $thumbFilePath);
 
 		// file should be saved now
-		if (file_exists($thumbFilePath)) {
+		if (file_exists($thumbFilePath))
+		{
 			return $thumbFileUrl;
 		}
 		return false;
 	}
+
 }

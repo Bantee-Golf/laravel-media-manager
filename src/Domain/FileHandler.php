@@ -3,6 +3,7 @@
 
 namespace EMedia\MediaManager\Domain;
 
+
 use EMedia\MediaManager\Exceptions\FormFieldNotFoundException;
 use EMedia\MediaManager\Exceptions\UniqueFilenameGenerationException;
 use Illuminate\Support\Facades\Input;
@@ -22,30 +23,31 @@ class FileHandler
 	 */
 	public function uploadFile($fieldName = false, $absoluteFileDirPath = false, $relativeFileDir = false)
 	{
-		if (!$fieldName && !$absoluteFileDirPath) {
-			return false;
-		}
+		if (!$fieldName && !$absoluteFileDirPath) return false;
 
 		// add the last dir separator if it's missing
 		$absoluteFileDirPath = rtrim($absoluteFileDirPath, '/') . '/';
-		if ($relativeFileDir) {
-			$relativeFileDir = rtrim($relativeFileDir, '/') . '/';
-		}
+		if ($relativeFileDir) $relativeFileDir = rtrim($relativeFileDir, '/') . '/';
 
 		// handle images
-		$request = request();
-		if (request()->hasFile($fieldName)) {
+		if (Input::hasFile($fieldName))
+		{
 			$file = Input::file($fieldName);
 
 			$newFileName = $this->getUniqueFileName($absoluteFileDirPath, $file->getClientOriginalName());
 			$file->move($absoluteFileDirPath, $newFileName);
 
-			if (!empty($relativeFileDir)) {
+			if (!empty($relativeFileDir))
+			{
 				return $relativeFileDir . $newFileName;
-			} else {
+			}
+			else
+			{
 				return $absoluteFileDirPath . $newFileName;
 			}
-		} else {
+		}
+		else
+		{
 			throw new FormFieldNotFoundException("Field $fieldName is not found with the input.");
 		}
 		return false;
@@ -63,12 +65,15 @@ class FileHandler
 		$pathInfo = pathinfo($currentFilePath);
 		$newFileName = false;
 
-		for ($i=0; $i < 500; $i++) {
+		for ($i=0; $i < 500; $i++)
+		{
 			$newFileName = date('Ymd') . \Illuminate\Support\Str::random(15) . '.' . $pathInfo['extension'];
-			if (! file_exists($dirPath . $newFileName)) {
+			if ( ! file_exists($dirPath . $newFileName))
+			{
 				break;
 			}
-			if ($i > 499) {
+			if ($i > 499)
+			{
 				// failed after almost 500 times
 				throw new UniqueFilenameGenerationException();
 			}
@@ -157,4 +162,6 @@ class FileHandler
 //			return false;
 //		}
 //	}
+
+
 }
